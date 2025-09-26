@@ -292,7 +292,8 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showStatus(`✓ ${result.message}`, 'success');
+                    const message = `✓ ${result.message}<br><a href="${result.fileUrl}" target="_blank" style="color: #155724; text-decoration: underline;">View file in Google Drive</a>`;
+                    showStatus(message, 'success');
                     uploadBtn.style.display = 'none';
                 } else {
                     showStatus(`✗ ${result.message}`, 'error');
