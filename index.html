@@ -239,9 +239,12 @@
     </div>
 
     <script>
-        // CONFIGURATION - Replace these with your actual URLs
-        const DRIVE_UPLOAD_URL = 'YOUR_GOOGLE_DRIVE_SCRIPT_URL_HERE';
-        const SHEETS_API_URL = 'YOUR_GOOGLE_SHEETS_SCRIPT_URL_HERE';
+        // CONFIGURATION - Replace with your single Google Apps Script Web App URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxcRX-ZZ-LbXuAshOtQdBIhS_NwMJV6SeO_PjrH4LfvHXTo-PUM5Ns23PjQXyVTrcMY/exec';
+        
+        // Use the same URL for both operations
+        const DRIVE_UPLOAD_URL = API_URL;
+        const SHEETS_API_URL = API_URL;
 
         let people = [];
         let uploadedFileUrl = '';
