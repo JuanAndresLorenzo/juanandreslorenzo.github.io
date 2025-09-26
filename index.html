@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image to Drive</title>
+    <title>Staff Registration & Upload</title>
     <style>
         * {
             margin: 0;
@@ -15,18 +15,15 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
         .container {
+            max-width: 800px;
+            margin: 0 auto;
             background: white;
             border-radius: 20px;
             padding: 40px;
-            max-width: 500px;
-            width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
@@ -34,315 +31,421 @@
             color: #333;
             margin-bottom: 30px;
             text-align: center;
-            font-size: 28px;
         }
 
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .section h2 {
+            color: #667eea;
             margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #f8f9ff;
+            font-size: 1.3em;
         }
 
-        .upload-area:hover {
-            border-color: #5568d3;
-            background: #f0f2ff;
-        }
-
-        .upload-area.dragover {
-            border-color: #5568d3;
-            background: #e8ebff;
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 48px;
+        .form-group {
             margin-bottom: 15px;
         }
 
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
         input[type="file"] {
-            display: none;
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #667eea;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         .preview {
-            margin: 20px 0;
+            margin-top: 20px;
             text-align: center;
-            display: none;
         }
 
         .preview img {
             max-width: 100%;
             max-height: 300px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 10px;
         }
 
-        .file-info {
-            margin-top: 10px;
-            color: #666;
-            font-size: 14px;
+        .people-list {
+            margin-top: 20px;
+        }
+
+        .person-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .person-info {
+            flex: 1;
         }
 
         button {
             background: #667eea;
             color: white;
             border: none;
-            padding: 14px 32px;
+            padding: 12px 30px;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            display: none;
+            transition: background 0.3s;
         }
 
-        button:hover:not(:disabled) {
+        button:hover {
             background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button.remove-btn {
+            background: #e74c3c;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        button.remove-btn:hover {
+            background: #c0392b;
         }
 
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
 
         .status {
-            padding: 14px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
             display: none;
-            font-weight: 500;
         }
 
         .status.success {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
+            display: block;
         }
 
         .status.error {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+            display: block;
         }
 
-        .status.loading {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
 
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .reset-btn {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-            margin-top: 10px;
-        }
-
-        .reset-btn:hover {
-            background: #667eea;
-            color: white;
+        .button-group button {
+            flex: 1;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📸 Upload Image</h1>
-        
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">☁️</div>
-            <p><strong>Click to select</strong> or drag and drop</p>
-            <p style="color: #999; font-size: 14px; margin-top: 8px;">PNG, JPG, GIF up to 10MB</p>
+        <h1>📋 Staff Registration & Upload</h1>
+
+        <!-- Operation Information -->
+        <div class="section">
+            <h2>Operation Information</h2>
+            <div class="form-group">
+                <label for="operationId">Operation ID</label>
+                <input type="number" id="operationId" placeholder="Enter operation ID">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="total">Total Amount</label>
+                <input type="number" id="total" placeholder="Enter total amount">
+            </div>
+            <div class="form-group">
+                <label for="releaseId">Release ID</label>
+                <input type="number" id="releaseId" placeholder="Enter release ID">
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <input type="text" id="status" placeholder="e.g., Pending, Approved">
+            </div>
         </div>
 
-        <input type="file" id="fileInput" accept="image/*">
-
-        <div class="preview" id="preview">
-            <img id="previewImg" src="" alt="Preview">
-            <div class="file-info" id="fileInfo"></div>
+        <!-- File Upload -->
+        <div class="section">
+            <h2>Upload Attachment</h2>
+            <div class="form-group">
+                <label for="fileInput">Select File</label>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+            <div class="preview" id="preview"></div>
+            <div id="uploadStatus" class="status"></div>
         </div>
 
-        <button id="uploadBtn">Upload to Drive</button>
-        <button class="reset-btn" id="resetBtn">Choose Another Image</button>
+        <!-- Staff Registration -->
+        <div class="section">
+            <h2>Register Staff</h2>
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" placeholder="Enter first name">
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" placeholder="Enter last name">
+            </div>
+            <div class="form-group">
+                <label for="personId">ID Number</label>
+                <input type="text" id="personId" placeholder="Enter ID number">
+            </div>
+            <button onclick="addPerson()">Add Person</button>
 
-        <div class="status" id="status"></div>
+            <div class="people-list" id="peopleList"></div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="section">
+            <h2>Submit</h2>
+            <div class="button-group">
+                <button onclick="submitToGoogleSheets()" id="submitBtn">
+                    Submit to Google Sheets
+                </button>
+            </div>
+            <div id="submitStatus" class="status"></div>
+        </div>
     </div>
 
     <script>
-        // CONFIGURATION: Replace with your deployed Google Apps Script URL
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzBtKfY8w0-0fUjTmreM4iOwPUVbRpZWS31gu45_m5DoiDn_eYtdFmTnC-x-H_U5g5N/exec';
+        // CONFIGURATION - Replace these with your actual URLs
+        const DRIVE_UPLOAD_URL = 'YOUR_GOOGLE_DRIVE_SCRIPT_URL_HERE';
+        const SHEETS_API_URL = 'YOUR_GOOGLE_SHEETS_SCRIPT_URL_HERE';
 
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const preview = document.getElementById('preview');
-        const previewImg = document.getElementById('previewImg');
-        const fileInfo = document.getElementById('fileInfo');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const status = document.getElementById('status');
+        let people = [];
+        let uploadedFileUrl = '';
 
-        let selectedFile = null;
-
-        // Click to upload
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        // Drag and drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0 && files[0].type.startsWith('image/')) {
-                handleFile(files[0]);
+        // Preview file
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').innerHTML = 
+                        `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+                
+                // Auto-upload to Drive
+                uploadToDrive(file);
             }
         });
 
-        // File selection
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
-
-        // Handle file
-        function handleFile(file) {
-            if (!file.type.startsWith('image/')) {
-                showStatus('Please select an image file', 'error');
-                return;
-            }
-
-            if (file.size > 10 * 1024 * 1024) {
-                showStatus('File size must be less than 10MB', 'error');
-                return;
-            }
-
-            selectedFile = file;
-
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                preview.style.display = 'block';
-                fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
-                uploadBtn.style.display = 'block';
-                resetBtn.style.display = 'block';
-                uploadArea.style.display = 'none';
-                status.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Upload to Google Drive
-        uploadBtn.addEventListener('click', async () => {
-            if (!selectedFile) return;
-
-            uploadBtn.disabled = true;
-            showStatus('<span class="loader"></span>Uploading...', 'loading');
+        // Upload file to Google Drive
+        async function uploadToDrive(file) {
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.textContent = 'Uploading...';
+            uploadStatus.className = 'status';
+            uploadStatus.style.display = 'block';
 
             try {
-                // Convert file to base64
-                const base64 = await fileToBase64(selectedFile);
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64Data = e.target.result.split(',')[1];
+                    
+                    const formData = new URLSearchParams();
+                    formData.append('fileData', base64Data);
+                    formData.append('fileName', file.name);
+                    formData.append('mimeType', file.type);
 
-                // Send to Google Apps Script
-                const response = await fetch(API_URL, {
+                    const response = await fetch(DRIVE_UPLOAD_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        uploadedFileUrl = result.fileUrl;
+                        uploadStatus.textContent = '✓ File uploaded successfully!';
+                        uploadStatus.className = 'status success';
+                    } else {
+                        throw new Error(result.message);
+                    }
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                uploadStatus.textContent = '✗ Upload failed: ' + error.message;
+                uploadStatus.className = 'status error';
+            }
+        }
+
+        // Add person to list
+        function addPerson() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const personId = document.getElementById('personId').value.trim();
+
+            if (!firstName || !lastName || !personId) {
+                alert('Please fill in all person fields');
+                return;
+            }
+
+            const person = {
+                TicketId: people.length + 1,
+                FirstName: firstName,
+                LastName: lastName,
+                Id: personId
+            };
+
+            people.push(person);
+            renderPeopleList();
+
+            // Clear inputs
+            document.getElementById('firstName').value = '';
+            document.getElementById('lastName').value = '';
+            document.getElementById('personId').value = '';
+        }
+
+        // Render people list
+        function renderPeopleList() {
+            const list = document.getElementById('peopleList');
+            if (people.length === 0) {
+                list.innerHTML = '<p style="color: #999;">No people added yet</p>';
+                return;
+            }
+
+            list.innerHTML = people.map((person, index) => `
+                <div class="person-item">
+                    <div class="person-info">
+                        <strong>${person.FirstName} ${person.LastName}</strong> - ID: ${person.Id}
+                    </div>
+                    <button class="remove-btn" onclick="removePerson(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Remove person from list
+        function removePerson(index) {
+            people.splice(index, 1);
+            // Update ticket IDs
+            people.forEach((person, i) => {
+                person.TicketId = i + 1;
+            });
+            renderPeopleList();
+        }
+
+        // Submit to Google Sheets
+        async function submitToGoogleSheets() {
+            const submitStatus = document.getElementById('submitStatus');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Validation
+            const operationId = document.getElementById('operationId').value;
+            const email = document.getElementById('email').value;
+            const total = document.getElementById('total').value;
+            const releaseId = document.getElementById('releaseId').value;
+            const status = document.getElementById('status').value;
+
+            if (!operationId || !email || !total || !releaseId || !status) {
+                submitStatus.textContent = '✗ Please fill in all operation fields';
+                submitStatus.className = 'status error';
+                return;
+            }
+
+            if (people.length === 0) {
+                submitStatus.textContent = '✗ Please add at least one person';
+                submitStatus.className = 'status error';
+                return;
+            }
+
+            // Prepare data
+            const data = {
+                OperationId: parseInt(operationId),
+                Mail: email,
+                AttachmentUrl: uploadedFileUrl || 'No attachment',
+                Total: parseInt(total),
+                ReleaseId: parseInt(releaseId),
+                Status: status,
+                QtyOfPeople: people.length,
+                Tickets: people
+            };
+
+            // Submit
+            submitBtn.disabled = true;
+            submitStatus.textContent = 'Submitting...';
+            submitStatus.className = 'status';
+            submitStatus.style.display = 'block';
+
+            try {
+                const response = await fetch(SHEETS_API_URL, {
                     method: 'POST',
-                    body: new URLSearchParams({
-                        fileData: base64,
-                        fileName: selectedFile.name,
-                        mimeType: selectedFile.type
-                    })
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 });
 
                 const result = await response.json();
 
-                if (result.success) {
-                    const message = `✓ ${result.message}<br><a href="${result.fileUrl}" target="_blank" style="color: #155724; text-decoration: underline;">View file in Google Drive</a>`;
-                    showStatus(message, 'success');
-                    uploadBtn.style.display = 'none';
+                if (result.status === 'success') {
+                    submitStatus.textContent = '✓ Successfully submitted to Google Sheets!';
+                    submitStatus.className = 'status success';
+                    
+                    // Reset form
+                    setTimeout(() => {
+                        resetForm();
+                    }, 2000);
                 } else {
-                    showStatus(`✗ ${result.message}`, 'error');
-                    uploadBtn.disabled = false;
+                    throw new Error(result.message);
                 }
             } catch (error) {
-                showStatus('Upload failed: ' + error.message, 'error');
-                uploadBtn.disabled = false;
+                submitStatus.textContent = '✗ Submission failed: ' + error.message;
+                submitStatus.className = 'status error';
+            } finally {
+                submitBtn.disabled = false;
             }
-        });
-
-        // Reset
-        resetBtn.addEventListener('click', () => {
-            selectedFile = null;
-            fileInput.value = '';
-            preview.style.display = 'none';
-            uploadBtn.style.display = 'none';
-            resetBtn.style.display = 'none';
-            uploadArea.style.display = 'block';
-            status.style.display = 'none';
-            uploadBtn.disabled = false;
-        });
-
-        // Utility functions
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const base64 = reader.result.split(',')[1];
-                    resolve(base64);
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
         }
 
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        // Reset form
+        function resetForm() {
+            document.getElementById('operationId').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('total').value = '';
+            document.getElementById('releaseId').value = '';
+            document.getElementById('status').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('preview').innerHTML = '';
+            people = [];
+            uploadedFileUrl = '';
+            renderPeopleList();
+            document.getElementById('uploadStatus').style.display = 'none';
+            document.getElementById('submitStatus').style.display = 'none';
         }
 
-        function showStatus(message, type) {
-            status.innerHTML = message;
-            status.className = `status ${type}`;
-            status.style.display = 'block';
-        }
+        // Initialize
+        renderPeopleList();
     </script>
 </body>
 </html>
